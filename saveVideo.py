@@ -32,9 +32,6 @@ for fps in fps_values:
                 ext = "mkv"
             if os.path.exists(f"ref-{uuid_str}.mp4"):
                 ext = "mp4"
-            else:
-                print(f"Neither ref-{uuid_str}.mp4 nor ref-{uuid_str}.mkv exists.")
-                continue
 
             # Convert the downloaded video to a GIF
             vid2gif_cmd = f'ffmpeg -i "ref-{uuid_str}.{ext}" -filter:v "fps={fps},setpts={1/speed}*PTS,scale={scaleWidth}:-1" -y "ref-{uuid_str}-speed_{speed}x-FPS_{fps}-w{scaleWidth}.gif"'
