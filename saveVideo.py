@@ -8,9 +8,13 @@ video_url = input("Enter the URL of the video: ")
 # Generate a UUID
 uuid_str = str(uuid.uuid4())
 
-# # Download the video using yt-dlp
+# Download the video using yt-dlp
 download_cmd = f'yt-dlp -f "bv[height<=1080]+ba/b" --add-metadata --embed-thumbnail -o "ref-{uuid_str}.%(ext)s" {video_url}'
 subprocess.run(download_cmd, shell=True)
+
+# Download audio only from the video using yt-dlp
+download_audio_cmd = f'yt-dlp -f "ba[ext=m4a]"-o "ref-{uuid_str}.%(ext)s" {video_url}'
+subprocess.run(download_audio_cmd, shell=True)
 
 # GIF parameters
 fps_values = [12]
