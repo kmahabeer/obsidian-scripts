@@ -13,8 +13,8 @@ download_cmd = f'yt-dlp -f "bv[height<=1080]+ba/b" --add-metadata --embed-thumbn
 subprocess.run(download_cmd, shell=True)
 
 # Download audio only from the video using yt-dlp
-download_audio_cmd = f'yt-dlp -f "ba[ext=m4a]"-o "ref-{uuid_str}.%(ext)s" {video_url}'
-subprocess.run(download_audio_cmd, shell=True)
+# download_audio_cmd = f'yt-dlp -f "ba[ext=m4a]"-o "ref-{uuid_str}.%(ext)s" {video_url}'
+# subprocess.run(download_audio_cmd, shell=True)
 
 # GIF parameters
 fps_values = [12]
