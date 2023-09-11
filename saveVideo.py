@@ -1,6 +1,14 @@
 import subprocess
 import uuid
-import os.path
+import os
+
+current_dir = os.getcwd()
+save_dir = "References/Videos/attachments"
+os.chdir("..")
+if not os.path.exists(save_dir):
+    os.makedirs(save_dir)
+else:
+    os.chdir(save_dir)
 
 # Ask user for video URL
 video_url = input("Enter the URL of the video: ")
@@ -42,5 +50,7 @@ for fps in fps_values:
                     # Compress the video
                     compress_cmd = f'gifsicle -O3 --lossy={lossy} --colors {color} "ref-{uuid_str}-speed_{speed}x-FPS_{fps}-w{scaleWidth}.gif" -o "ref-{uuid_str}-speed_{speed}x-FPS_{fps}-w{scaleWidth}-compressed-lossy_{lossy}-colors_{color}.gif"'
                     subprocess.run(compress_cmd, shell=True)
+
+os.chdir(current_dir)
 
 print("\nVideo downloaded, converted to GIF, and compressed.")
