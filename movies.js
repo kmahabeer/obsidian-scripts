@@ -106,7 +106,7 @@ function linkifyList(list) {
 	if (list == 'N/A') return `N/A`;
 	if (list.length === 1) return `[[${list[0]}]]`;
 
-	return list.map((item) => `\n\t- [[${item.trim()}]]`).join('');
+	return list.map((item) => `[[${item.trim()}]]`).join(', ');
 }
 
 function replaceIllegalFileNameCharactersInString(string) {
