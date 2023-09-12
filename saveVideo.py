@@ -1,6 +1,7 @@
 import subprocess
 import uuid
 import os
+import pyperclip
 
 current_dir = os.getcwd()
 save_dir = "References/Videos/attachments"
@@ -73,3 +74,6 @@ for fps in fps_values:
 
 os.chdir(current_dir)
 print(output_string)
+print(f"Video file: ref-{uuid_str}.{ext}s")
+print(f"Gif file: ref-{uuid_str}-speed_{speed}x-FPS_{fps}-w{scaleWidth}.gif")
+pyperclip.copy(f"ref-{uuid_str}-speed_{speed}x-FPS_{fps}-w{scaleWidth}.gif")
