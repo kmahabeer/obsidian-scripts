@@ -56,6 +56,7 @@
   let defaultParams = [];
   let params = [];
   let paramsList = [];
+  let selectedParamChoices = new Map();
 
   if (referenceType == "Motion Graphics" || referenceType == "Title Sequence") {
     defaultParams = ['Design and Animation', 'Music and SFX', 'Vibes'];
@@ -66,12 +67,11 @@
       params = params.concat('Movie and TV', defaultParams);
     }
   }
-
-  const selectedFiles = new Map();
-  let prompt;
   
   // Multi-select
   for (const param of params) {
+    let prompt;
+    const selectedFiles = [];
     const folderChoicePath = `${param}/`;
     const filesInFolder = app.vault.getMarkdownFiles()
       .filter(file => file.path.includes(folderChoicePath))
@@ -79,17 +79,25 @@
     
     while (true) {
       prompt = `'${param}' parameter. Press [ESC] when finished.`;
-      console.log(selectedFiles)
+      if (selectedFiles.length >= 1) {
+        prompt = prompt.concat(` {${selectedFiles.map(file => file).join(`, `)}}`);
+      }
       const selectedFile = await tp.system.suggester(filesInFolder, filesInFolder, false, prompt);
       if (!selectedFile) {
         break;
       } else {
-        selectedFiles.set(param, selectedFile);
+        selectedFiles.push(selectedFile);
+        selectedParamChoices.set(param, selectedFiles);
         filesInFolder.splice(filesInFolder.indexOf(selectedFile), 1);
       }
     }
   }
-  printMap(selectedFiles, paramsList);
+  for (const [key, value] of selectedParamChoices.entries()) {
+    let paramPrintOut;
+    paramPrintOut = `**${key}:**`;
+    paramPrintOut = paramPrintOut.concat(` ${value.map(file => `[[${file}]]`).join(`, `)}`);
+    paramsList.push(paramPrintOut);
+  }
 -%>
 <% frontMatter %>
 <% referenceType %>
