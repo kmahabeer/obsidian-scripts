@@ -52,34 +52,44 @@
   const frontMatter = `---\ntags:\n  - reference\n  - ${tag}\nsource: ${url}\n---`;
 -%>
 <%*
-  // Video
+  // Video Parameters
   let defaultParams = [];
   let params = [];
   let paramsList = [];
 
   if (referenceType == "Motion Graphics" || referenceType == "Title Sequence") {
     defaultParams = ['Design and Animation', 'Music and SFX', 'Vibes'];
+    if (referenceType === 'Motion Graphics') {
+      params = params.concat('Brands', defaultParams);
+    }
+    if (referenceType === 'Title Sequence') {
+      params = params.concat('Movie and TV', defaultParams);
+    }
   }
 
-  if (referenceType === 'Motion Graphics') {
-    params = params.concat('Brands', defaultParams);
-  }
-  if (referenceType === 'Title Sequence') {
-    params = params.concat('Movie and TV', defaultParams);
-  }
-
-  const paramsAndChoices = new Map();
+  const selectedFiles = new Map();
+  let prompt;
+  
+  // Multi-select
   for (const param of params) {
     const folderChoicePath = `${param}/`;
     const filesInFolder = app.vault.getMarkdownFiles()
       .filter(file => file.path.includes(folderChoicePath))
       .map(tFile=>tFile.basename);
-    const file = await tp.system.suggester(filesInFolder, filesInFolder, false, 
-      `Select an item for the "${param}" parameter: `);
     
-    paramsAndChoices.set(param, file);
+    while (true) {
+      prompt = `'${param}' parameter. Press [ESC] when finished.`;
+      console.log(selectedFiles)
+      const selectedFile = await tp.system.suggester(filesInFolder, filesInFolder, false, prompt);
+      if (!selectedFile) {
+        break;
+      } else {
+        selectedFiles.set(param, selectedFile);
+        filesInFolder.splice(filesInFolder.indexOf(selectedFile), 1);
+      }
+    }
   }
-  printMap(paramsAndChoices, paramsList);
+  printMap(selectedFiles, paramsList);
 -%>
 <% frontMatter %>
 <% referenceType %>
