@@ -31,7 +31,7 @@
 -%>
 <%*
   // tags
-  const tags = referenceType
+  const tag = referenceType
     .toLowerCase()
     .replace(/\bmisc\. /g, '')
     .replace(/[./\\?%*:|"<>]/g, '')
@@ -39,8 +39,12 @@
 -%>
 <%*
   // URL
-  const url = await tp.system.prompt(`Enter the URL for the video:`);
+  const url = await tp.system.prompt(`Enter the URL for the ${referenceType.toLowerCase()}:`);
 -%>
+<%*
+  // Frontmatter
+  const frontMatter = `---\ntags:\n  - reference\n  - ${tag}\nsource: ${url}\n---`;
+-%>
+<% frontMatter %>
 <% referenceType %>
 Media Type: <% mediaType %>
-<% tags %>
