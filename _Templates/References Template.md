@@ -1,8 +1,10 @@
 <%*
-  function getKeyByValue(map, value) {
+  function getKeyByValue(map, val) {
     for (const [key, value] of map.entries()) {
-      if (val === value) {
-        return key;
+      for (const element of value) {
+        if (val === element) {
+          return key;
+        }
       }
     }
   }
@@ -25,6 +27,7 @@ const referenceTypesList = [];
 iterateOverMap(referenceTypes, referenceTypesList);
 const referenceType = await tp.system.suggester(referenceTypesList, referenceTypesList,
   false, "Select the type of reference: ");
+const mediaType = getKeyByValue(referenceTypes, referenceType);
 -%>
 <%*
 // tags
@@ -39,4 +42,5 @@ const tags = referenceType
 const url = await tp.system.prompt(`Enter the URL for the video:`);
 -%>
 <% referenceType %>
+Media Type: <% mediaType %>
 <% tags %>
