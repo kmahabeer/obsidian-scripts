@@ -1,24 +1,29 @@
 <%*
-const refType = await tp.system.suggester([
-  "Music", "SFX", // Audio
-  "Artwork", "Figure Study", // Image
-  "Motion Graphics", "Short Film", "Title Sequence", "Misc. Video" // Video
-  ], [
-  "Music", "SFX", // Audio
-  "Artwork", "Figure Study", // Image
-  "Motion Graphics", "Short Film", "Title Sequence", "Misc. Video" // Video
-]);
-
-if (refType == "Motion Graphics") {
-  let media = "Video";
-  let source = await tp.system.prompt("Enter URL for the reference: ");
-  let videoLocation = await tp.system.suggester(["Locally", "On YouTube", "Other"], ["Locally", "On YouTube", "Other"], false, "Where is the video file saved?");
-
-  if (videoLocation == "Locally") {
-    let gif = await tp.system.prompt("Enter filename for gif: ");
-    // let cover = `<img src="G:/My Drive/Obsidian-notes/Art/References/Videos/attachments/${gif}">`;
+// User prompt for type of reference
+const referenceTypes = new Map();
+referenceTypes.set("Audio", ["Music", "SFX"]);
+referenceTypes.set("Image", ["Artwork", "Figure Study"]);
+referenceTypes.set("Video", ["Motion Graphics", "Short Film", "Title Sequence", "Misc. Video"]);
+const referenceTypesList = [];
+for (const [key, value] of referenceTypes.entries()) {
+  for (const element of value) {
+    referenceTypesList.push(element);
   }
 }
-%>
-
-![[<%* tR += gif %>]]
+const referenceType = await tp.system.suggester(referenceTypesList, referenceTypesList,
+  false, "Select the type of reference: ");
+-%>
+<%*
+// tags
+const tags = referenceType
+  .toLowerCase()
+  .replace(/\bmisc\. /g, '')
+  .replace(/[./\\?%*:|"<>]/g, '')
+  .replace(/ /g, '-');
+-%>
+<%*
+// URL
+const url = await tp.system.prompt(`Enter the URL for the video:`);
+-%>
+<% referenceType %>
+<% tags %>
