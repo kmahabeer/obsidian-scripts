@@ -17,12 +17,6 @@
     }
   }
   
-  function printMap(map, array) {
-    for (const [key, value] of map.entries()) {
-      array.push(`**${key}:** [[${value}]]`);
-    }
-  }
-  
   function createParameterListFromMap(map, list) {
     for (const [key, value] of map.entries()) {
       let paramPrintOut;
