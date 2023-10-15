@@ -32,14 +32,25 @@
     }
   }
 
+  function getFilesInFolder(folder, query = '', ext = ['md', 'txt']) {
+    let filesInFolder;
+    filesInFolder = app.vault.getFiles()
+      .filter(file=>file.path.includes(folder))
+      .filter(tFile=>ext.includes(tFile.extension))
+      .filter(tFile=>tFile.basename.toLowerCase().includes(query.toLowerCase()))
+      .map(tFile=>tFile.basename);
+    if (filesInFolder.length == 0) {
+      filesInFolder = [];
+    }
+    return filesInFolder;
+  }
+
   async function createMultiselectSuggester(params, map, prompt) {
     for (const param of params) {
       
       const selectedFiles = [];
       const folderChoicePath = `${param}/`;
-      const filesInFolder = app.vault.getMarkdownFiles()
-        .filter(file => file.path.includes(folderChoicePath))
-        .map(tFile=>tFile.basename);
+      const filesInFolder = getFilesInFolder(folderChoicePath);
       
       while (true) {
         prompt = `'${param}' parameter. Press [ESC] when finished.`;
