@@ -43,30 +43,29 @@
     return await tp.system.suggester(filesInFolder, filesInFolder, false, prompt);
   }
 
-  async function createMultiSelectFromFiles(param, map, prompt) {
-    const selectedFiles = [];
-    const folderChoicePath = `${param}/`;
-    const filesInFolder = getFilesInFolder(folderChoicePath);
-    
+  async function createMultiSelectFromFiles(param, map, prompt, options) {   
+    const selectedFiles = []; 
     while (true) {
       prompt = `'${param}' parameter. Press [ESC] when finished.`;
       if (selectedFiles.length >= 1) {
         prompt = prompt.concat(` {${selectedFiles.map(file => file).join(`, `)}}`);
       }
-      const selectedFile = await createSingleSelectFromFile(filesInFolder, prompt);
+      const selectedFile = await createSingleSelectFromFile(options, prompt);
       if (!selectedFile) {
         break;
       } else {
         selectedFiles.push(selectedFile);
+        options.splice(options.indexOf(selectedFile), 1);
         map.set(param, selectedFiles);
-        filesInFolder.splice(filesInFolder.indexOf(selectedFile), 1);
       }
     }
   }
 
   async function createMultiselectSuggester(params, map, prompt) {
     for (const param of params) {
-      await createMultiSelectFromFiles(param, map, prompt);
+      const folderChoicePath = `${param}/`;
+      const filesInFolder = getFilesInFolder(folderChoicePath);
+      await createMultiSelectFromFiles(param, map, prompt, filesInFolder);
     }
     return map;
   }
