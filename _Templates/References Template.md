@@ -39,33 +39,39 @@
     return filesInFolder;
   }
 
-  async function createSingleSelectFromFile(filesInFolder, prompt) {
-    return await tp.system.suggester(filesInFolder, filesInFolder, false, prompt);
+  async function createSingleSelectMenu(menuOptions, menuPrompt) {
+    return await tp.system.suggester(menuOptions, menuOptions, false, menuPrompt);
   }
 
-  async function createMultiSelectFromFiles(param, map, prompt, options) {   
-    const selectedFiles = []; 
+  async function createMultiSelectMenu(menuOptions, menuPrompt) {   
+    const selectedOptions = []; 
     while (true) {
-      prompt = `'${param}' parameter. Press [ESC] when finished.`;
-      if (selectedFiles.length >= 1) {
-        prompt = prompt.concat(` {${selectedFiles.map(file => file).join(`, `)}}`);
+      let updatedMenuPrompt = '';
+      if (selectedOptions.length >= 1) {
+        updatedMenuPrompt = `${menuPrompt} ${selectedOptions.map(file => file).join(`, `)}`;
+      } else {
+        updatedMenuPrompt = menuPrompt;
       }
-      const selectedFile = await createSingleSelectFromFile(options, prompt);
-      if (!selectedFile) {
+      const selectedOption = await createSingleSelectMenu(menuOptions, updatedMenuPrompt);
+      if (!selectedOption) {
         break;
       } else {
-        selectedFiles.push(selectedFile);
-        options.splice(options.indexOf(selectedFile), 1);
-        map.set(param, selectedFiles);
+        selectedOptions.push(selectedOption);
+        menuOptions.splice(menuOptions.indexOf(selectedOption), 1);
       }
     }
+    return selectedOptions;
   }
 
   async function createMultiselectSuggester(params, map, prompt) {
     for (const param of params) {
       const folderChoicePath = `${param}/`;
       const filesInFolder = getFilesInFolder(folderChoicePath);
-      await createMultiSelectFromFiles(param, map, prompt, filesInFolder);
+
+      let menuPrompt = `'${param}' parameter. Press [ESC] when finished.`;
+      const selectedOptions = await createMultiSelectMenu(filesInFolder, menuPrompt);
+      map.set(param, selectedOptions);
+      console.log(map)
     }
     return map;
   }
@@ -126,7 +132,7 @@
   }
   
   // Multi-select
-  let prompt;
+  // let prompt;
   await createMultiselectSuggester(params, selectedParamChoices, prompt);
   createParameterListFromMap(selectedParamChoices, paramsList);
 -%>
