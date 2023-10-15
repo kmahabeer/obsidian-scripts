@@ -1,0 +1,15 @@
+{
+  "name": "scripts",
+  "version": "0.1.0",
+  "description": "",
+  "main": "saveVideo.js",
+  "scripts": {
+    "start": "node saveVideo.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "uuid": "^9.0.1"
+  }
+}
