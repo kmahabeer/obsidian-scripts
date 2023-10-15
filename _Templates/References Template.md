@@ -88,6 +88,16 @@
   const frontMatter = `---\ntags:\n  - reference\n  - ${tag}\nsource: ${url}\n---`;
 -%>
 <%*
+  // Image Parameters
+  const paramMap = new Map();
+  paramMap.set('User Prompts', ['Title', 'Date', 'Location', 'Dimensions']);
+  paramMap.set('Multi Select', ['Style', 'Art Period', 'Subject Matter', 'Media', 'Vibes']);
+  paramMap.set('Single Select', ['Artist']);
+  if (referenceType == "Artwork") {
+    params = ['Title', 'Artist', 'Date', 'Style', 'Art Period', 'Genre / Subject Matter', 'Media', 'Location', 'Dimensions', 'Vibes'];
+  }
+-%>
+<%*
   // Video Parameters
   let defaultParams = [];
   let params = [];
