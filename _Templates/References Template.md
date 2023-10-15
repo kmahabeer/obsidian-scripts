@@ -39,20 +39,20 @@
     return filesInFolder;
   }
 
-  async function createSingleSelectMenu(menuOptions, menuPrompt) {
-    return await tp.system.suggester(menuOptions, menuOptions, false, menuPrompt);
+  async function createSingleSelectMenuDialog(menuOptions, menuPlaceholder) {
+    return await tp.system.suggester(menuOptions, menuOptions, false, menuPlaceholder);
   }
 
-  async function createMultiSelectMenu(menuOptions, menuPrompt) {   
+  async function createMultiSelectMenuDialog(menuOptions, menuPlaceholder) {   
     const selectedOptions = []; 
     while (true) {
-      let updatedMenuPrompt = '';
+      let updatedMenuPlaceholder = '';
       if (selectedOptions.length >= 1) {
-        updatedMenuPrompt = `${menuPrompt} ${selectedOptions.map(file => file).join(`, `)}`;
+        updatedMenuPlaceholder = `${menuPlaceholder} ${selectedOptions.map(file => file).join(`, `)}`;
       } else {
-        updatedMenuPrompt = menuPrompt;
+        updatedMenuPlaceholder = menuPlaceholder;
       }
-      const selectedOption = await createSingleSelectMenu(menuOptions, updatedMenuPrompt);
+      const selectedOption = await createSingleSelectMenuDialog(menuOptions, updatedMenuPlaceholder);
       if (!selectedOption) {
         break;
       } else {
@@ -68,8 +68,8 @@
       const folderChoicePath = `${param}/`;
       const filesInFolder = getFilesInFolder(folderChoicePath);
 
-      let menuPrompt = `'${param}' parameter. Press [ESC] when finished.`;
-      const selectedOptions = await createMultiSelectMenu(filesInFolder, menuPrompt);
+      let menuPlaceholder = `'${param}' parameter. Press [ESC] when finished.`;
+      const selectedOptions = await createMultiSelectMenuDialog(filesInFolder, menuPlaceholder);
       map.set(param, selectedOptions);
       console.log(map)
     }
