@@ -45,27 +45,34 @@
     return filesInFolder;
   }
 
+  async function createSingleSelectFromFile(filesInFolder, prompt) {
+    return await tp.system.suggester(filesInFolder, filesInFolder, false, prompt);
+  }
+
+  async function createMultiSelectFromFiles(param, map, prompt) {
+    const selectedFiles = [];
+    const folderChoicePath = `${param}/`;
+    const filesInFolder = getFilesInFolder(folderChoicePath);
+    
+    while (true) {
+      prompt = `'${param}' parameter. Press [ESC] when finished.`;
+      if (selectedFiles.length >= 1) {
+        prompt = prompt.concat(` {${selectedFiles.map(file => file).join(`, `)}}`);
+      }
+      const selectedFile = await createSingleSelectFromFile(filesInFolder, prompt);
+      if (!selectedFile) {
+        break;
+      } else {
+        selectedFiles.push(selectedFile);
+        map.set(param, selectedFiles);
+        filesInFolder.splice(filesInFolder.indexOf(selectedFile), 1);
+      }
+    }
+  }
+
   async function createMultiselectSuggester(params, map, prompt) {
     for (const param of params) {
-      
-      const selectedFiles = [];
-      const folderChoicePath = `${param}/`;
-      const filesInFolder = getFilesInFolder(folderChoicePath);
-      
-      while (true) {
-        prompt = `'${param}' parameter. Press [ESC] when finished.`;
-        if (selectedFiles.length >= 1) {
-          prompt = prompt.concat(` {${selectedFiles.map(file => file).join(`, `)}}`);
-        }
-        const selectedFile = await tp.system.suggester(filesInFolder, filesInFolder, false, prompt);
-        if (!selectedFile) {
-          break;
-        } else {
-          selectedFiles.push(selectedFile);
-          map.set(param, selectedFiles);
-          filesInFolder.splice(filesInFolder.indexOf(selectedFile), 1);
-        }
-      }
+      await createMultiSelectFromFiles(param, map, prompt);
     }
     return map;
   }
