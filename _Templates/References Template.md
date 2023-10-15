@@ -100,6 +100,6 @@
   }
 -%>
 <% frontMatter %>
-<% referenceType %>
-Media Type: <% mediaType %>
+## <% mediaType %>
+
 <% paramsList.map(item => `${item}`).join(`\n`) %>
