@@ -22,6 +22,42 @@
       array.push(`**${key}:** [[${value}]]`);
     }
   }
+  
+  function createParameterListFromMap(map, list) {
+    for (const [key, value] of map.entries()) {
+      let paramPrintOut;
+      paramPrintOut = `**${key}:**`;
+      paramPrintOut = paramPrintOut.concat(` ${value.map(file => `[[${file}]]`).join(`, `)}`);
+      paramsList.push(paramPrintOut);
+    }
+  }
+
+  async function createMultiselectSuggester(params, map, prompt) {
+    for (const param of params) {
+      
+      const selectedFiles = [];
+      const folderChoicePath = `${param}/`;
+      const filesInFolder = app.vault.getMarkdownFiles()
+        .filter(file => file.path.includes(folderChoicePath))
+        .map(tFile=>tFile.basename);
+      
+      while (true) {
+        prompt = `'${param}' parameter. Press [ESC] when finished.`;
+        if (selectedFiles.length >= 1) {
+          prompt = prompt.concat(` {${selectedFiles.map(file => file).join(`, `)}}`);
+        }
+        const selectedFile = await tp.system.suggester(filesInFolder, filesInFolder, false, prompt);
+        if (!selectedFile) {
+          break;
+        } else {
+          selectedFiles.push(selectedFile);
+          map.set(param, selectedFiles);
+          filesInFolder.splice(filesInFolder.indexOf(selectedFile), 1);
+        }
+      }
+    }
+    return map;
+  }
 -%>
 <%*
   // User prompt for type of reference
@@ -69,35 +105,9 @@
   }
   
   // Multi-select
-  for (const param of params) {
-    let prompt;
-    const selectedFiles = [];
-    const folderChoicePath = `${param}/`;
-    const filesInFolder = app.vault.getMarkdownFiles()
-      .filter(file => file.path.includes(folderChoicePath))
-      .map(tFile=>tFile.basename);
-    
-    while (true) {
-      prompt = `'${param}' parameter. Press [ESC] when finished.`;
-      if (selectedFiles.length >= 1) {
-        prompt = prompt.concat(` {${selectedFiles.map(file => file).join(`, `)}}`);
-      }
-      const selectedFile = await tp.system.suggester(filesInFolder, filesInFolder, false, prompt);
-      if (!selectedFile) {
-        break;
-      } else {
-        selectedFiles.push(selectedFile);
-        selectedParamChoices.set(param, selectedFiles);
-        filesInFolder.splice(filesInFolder.indexOf(selectedFile), 1);
-      }
-    }
-  }
-  for (const [key, value] of selectedParamChoices.entries()) {
-    let paramPrintOut;
-    paramPrintOut = `**${key}:**`;
-    paramPrintOut = paramPrintOut.concat(` ${value.map(file => `[[${file}]]`).join(`, `)}`);
-    paramsList.push(paramPrintOut);
-  }
+  let prompt;
+  await createMultiselectSuggester(params, selectedParamChoices, prompt);
+  createParameterListFromMap(selectedParamChoices, paramsList);
 -%>
 <% frontMatter %>
 ## <% mediaType %>
