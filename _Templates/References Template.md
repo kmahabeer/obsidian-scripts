@@ -40,7 +40,9 @@
   }
 
   async function createSingleSelectMenuDialog(menuOptions, menuPlaceholder) {
-    return await tp.system.suggester(menuOptions, menuOptions, false, menuPlaceholder);
+    const selectedOption = [];
+    selectedOption.push(await tp.system.suggester(menuOptions, menuOptions, false, menuPlaceholder));
+    return selectedOption;
   }
 
   async function createMultiSelectMenuDialog(menuOptions, menuPlaceholder) {   
@@ -63,18 +65,15 @@
     return selectedOptions;
   }
 
-  async function createMultiselectSuggester(params, map, prompt) {
-    for (const param of params) {
-      const folderChoicePath = `${param}/`;
-      const filesInFolder = getFilesInFolder(folderChoicePath);
-
-      let menuPlaceholder = `'${param}' parameter. Press [ESC] when finished.`;
-      const selectedOptions = await createMultiSelectMenuDialog(filesInFolder, menuPlaceholder);
-      map.set(param, selectedOptions);
-      console.log(map)
-    }
-    return map;
+  async function createSingleSelectMenuFromFiles(folder, menuPlaceholder) {
+    const filesInFolder = getFilesInFolder(folder);
+    return await createSingleSelectMenuDialog(filesInFolder, menuPlaceholder);
   }
+
+  async function createMultiSelectMenuFromFiles(folder, menuPlaceholder) {
+    const filesInFolder = getFilesInFolder(folder);
+    return await createMultiSelectMenuDialog(filesInFolder, menuPlaceholder);
+  }    
 -%>
 <%*
   // User prompt for type of reference
@@ -132,8 +131,13 @@
   }
   
   // Multi-select
-  // let prompt;
-  await createMultiselectSuggester(params, selectedParamChoices, prompt);
+  for (const param of params) {
+    const paramFolder = `${param}/`;
+    const menuPlaceholder = `'${param}' parameter. Press [ESC] to proceed.`;
+    const selectedOptions = await createSingleSelectMenuFromFiles(paramFolder, menuPlaceholder);
+    selectedParamChoices.set(param, selectedOptions);
+    console.log(selectedParamChoices)
+  }
   createParameterListFromMap(selectedParamChoices, paramsList);
 -%>
 <% frontMatter %>
