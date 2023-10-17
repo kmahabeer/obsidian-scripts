@@ -105,13 +105,21 @@
 -%>
 <%*
   // Image Parameters
+  // TODO: if 'paramFolder' is empty, then the select is not from files and instead from a given list? 
   const paramMap = new Map();
-  paramMap.set('User Prompts', ['Title', 'Date', 'Location', 'Dimensions']);
-  paramMap.set('Multi Select', ['Style', 'Art Period', 'Subject Matter', 'Media', 'Vibes']);
-  paramMap.set('Single Select', ['Artist']);
-  if (referenceType == "Artwork") {
-    params = ['Title', 'Artist', 'Date', 'Style', 'Art Period', 'Genre / Subject Matter', 'Media', 'Location', 'Dimensions', 'Vibes'];
-  }
+  paramMap.set('Title', {'promptType': 'text input', 'paramFolder': '', 'selectedOptions': []});
+  paramMap.set('Date', {'promptType': 'text input', 'paramFolder': '', 'selectedOptions': []});
+  paramMap.set('Location', {'promptType': 'text input', 'paramFolder': '', 'selectedOptions': []});
+  paramMap.set('Dimensions', {'promptType': 'text input', 'paramFolder': '', 'selectedOptions': []});
+  
+  paramMap.set('Artist', {'promptType': 'single select', 'paramFolder': 'temp/art style/', 'selectedOptions': []});
+
+  paramMap.set('Style', {'promptType': 'multi select', 'paramFolder': 'temp/art style/', 'selectedOptions': []});
+  paramMap.set('Art Period', {'promptType': 'multi select', 'paramFolder': 'temp/art period/', 'selectedOptions': []});
+  paramMap.set('Subject Matter', {'promptType': 'multi select', 'paramFolder': 'temp/art period/', 'selectedOptions': []});
+  paramMap.set('Media', {'promptType': 'multi select', 'paramFolder': 'temp/art period/', 'selectedOptions': []});
+  paramMap.set('Vibes', {'promptType': 'multi select', 'paramFolder': 'temp/art period/', 'selectedOptions': []});
+  let params = ['Title', 'Artist', 'Date', 'Style', 'Art Period', 'Genre / Subject Matter', 'Media', 'Location', 'Dimensions', 'Vibes'];
 -%>
 <%*
   // Video Parameters
